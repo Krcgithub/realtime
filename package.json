@@ -2,9 +2,9 @@
   "name": "realtime-voxo",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app"
   },
   "repository": {
     "type": "git",
@@ -16,5 +16,11 @@
   "bugs": {
     "url": "https://github.com/Krcgithub/realtime/issues"
   },
-  "homepage": "https://github.com/Krcgithub/realtime#readme"
+  "homepage": "https://github.com/Krcgithub/realtime#readme",
+  "dependencies": {
+    "@feathersjs/express": "^4.5.8",
+    "@feathersjs/feathers": "^4.5.8",
+    "@feathersjs/socketio": "^4.5.8",
+    "moment": "^2.27.0"
+  }
 }
