@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <title>Lead List</title>
+  </head>
+  <body class="bg-dark text-white">
+    <nav class="navbar navbar-light bg-light">
+      <div class="container">
+        <span class="navbar-brand mb-0 h1">Lead List</span>
+      </div>
+    </nav>
+
+    <div class="container mt-5">
+      <div class="row">
+        <div class="col-md-6">
+          <h1 class="text-center mb-3">
+            Submit a Lead
+          </h1>
+          <form id="form">
+            <div class="form-group">
+              <input
+                type="text"
+                id="lead-text"
+                class="form-control bg-dark text-white"
+                placeholder="Enter Potential Lead (30 chars max)"
+                maxlength="30"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="text"
+                id="lead-tech"
+                class="form-control bg-dark text-white"
+                placeholder="Company Decision Maker"
+                maxlength="30"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <input
+                type="text"
+                id="lead-viewer"
+                class="form-control bg-dark text-white"
+                placeholder="Who wants it"
+                maxlength="20"
+                required
+              />
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">
+              Suggest Lead
+            </button>
+          </form>
+        </div>
+        <div class="col-md-6">
+          <div id="ideas">
+            <!-- <div class="card bg-secondary my-3">
+              <div class="card-body">
+                <p class="lead">
+                  Create a realtime app <strong>(Feathers.js)</strong>
+                  <br />
+                  <em>Submitted by John Doe</em>
+                  <br />
+                  <small>2:05:10</small>
+                </p>
+              </div>
+            </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/@feathersjs/client@^4.3.0/dist/feathers.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+
+    <script>
+      // Socket.io setup
+      const socket = io('http://localhost:3030');
+
+      // Init feathers app
+      const app = feathers();
+
+      // Register socket.io to talk to server
+      app.configure(feathers.socketio(socket));
+
+      document.getElementById('form').addEventListener('submit', sendLead);
+
+      async function sendLead(e) {
+        // we dont want the form to submit to a file ( so I hear )
+        e.preventDefault();
+
+        const text = document.getElementById('idea-text');
+        const contact = document.getElementById('idea-contact');
+        const viewer = document.getElementById('idea-viewer');
+
+        // Create new idea
+        app.service('leads').create({
+          text: text.value,
+          contact: contact.value,
+          viewer: viewer.value
+        });
+
+        // Clear inputs
+        text.value = '';
+        contact.value = '';
+        viewer.value = '';
+      }
+
+      function renderIdea(lead) {
+        document.getElementById(
+          'leads'
+        ).innerHTML += `<div class="card bg-secondary my-3">
+              <div class="card-body">
+                <p class="lead">
+                  ${lead.text} <strong>(${lead.contact})</strong>
+                  <br />
+                  <em>Submitted by ${lead.viewer}</em>
+                  <br />
+                  <small>${lead.time}</small>
+                </p>
+              </div>
+            </div>`;
+      }
+
+      async function init() {
+        // Find ideas
+        const leads = await app.service('leads').find();
+
+        // Add existing ideas to list
+        leads.forEach(renderLead);
+
+        // Add idea in realtime
+        app.service('ideas').on('created', renderLead);
+      }
+
+      init();
+    </script>
+  </body>
+</html>

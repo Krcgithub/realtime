@@ -15,7 +15,7 @@ class LeadList {
     const lead = {
       id: this.lead.length, // DB needs to create the ID
       text: data.text,
-      tech: data.tech,
+      contact: data.contact,
       viewer: data.viewer
     }
     lead.time = moment().format('h:mm:ss a');
@@ -48,3 +48,9 @@ app.publish(data => app.channel('stream'));
 const PORT = process.env.PORT || 3030;
 
 app.listen(PORT).on('listening', () => console.log (`Realtime running`));
+
+// app.service('leads').create({
+//   text: 'This should be company name',
+//   contact: 'Person to contact',
+//   viewer: 'Kelton'
+// });
